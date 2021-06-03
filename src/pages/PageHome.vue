@@ -1,0 +1,92 @@
+<template>
+  <div>
+    <AppHero />
+    <div  v-if="PageLoader_isDataLoaded"  class="container">
+      <section class="section">
+        <div class="m-b-lg">
+          <h1 class="title is-inline">Featured Meetups in "Location"</h1>
+          <AppDropdown />
+          <button class="button is-primary is-pulled-right m-r-sm">
+            Create Meetups
+          </button>
+          <button class="button is-primary is-pulled-right m-r-sm">
+            <router-link :to="'/find'" class="link-white"> All</router-link>
+          </button>
+        </div>
+        <div class="row columns is-multiline">
+          <!-- meetup -->
+          <meetupItem
+            v-for="meetup in meetups"
+            :key="meetup.id"
+            :meetup="meetup"
+          />
+        </div>
+      </section>
+      <section class="section">
+        <div>
+          <h1 class="title">Categories</h1>
+          <div class="columns cover is-multiline is-mobile">
+            <categoryItem
+              v-for="category in categories"
+              :key="category.id"
+              :category="category"
+            />
+          </div>
+        </div>
+      </section>
+    </div>
+    <div v-else>
+    <AppSpinner/>
+    </div>
+  </div>
+</template>
+
+<script>
+//import axios from "axios";
+import categoryItem from "@/components/categoryItem";
+import meetupItem from "@/components/meetupItem";
+import { mapActions, mapState } from "vuex";
+import PageLoader from '@/mixins/PageLoader';
+export default {
+  components: {
+    meetupItem,
+    categoryItem,
+  },
+
+mixins:[PageLoader],
+
+  computed: {
+    ...mapState({
+      meetups: (state) => state.meetups.items,
+      categories: (state) => state.categories.items,
+    }),
+  },
+
+  created() {
+    Promise.all([ this.fetchMeetups(), this.fetchCategories()])
+     .then(() => this.pageLoader_resolveData())
+        .catch((err) => {
+          console.error(err)
+          this.pageLoader_resolveData()
+        })
+
+    },
+   
+  
+
+  methods: {
+    ...mapActions('meetups',["fetchMeetups"]),
+    ...mapActions('categories',["fetchCategories"]),
+
+  },
+};
+</script>
+
+<style scoped>
+.is-rounded {
+  border-radius: 10px !important;
+}
+.link-white {
+  color: white;
+}
+</style>
