@@ -63,11 +63,15 @@
                 <div class="control">
                   <input
                     v-model="form.avatar"
+                    @blur="$v.form.avatar.$touch()"
                     class="input is-large"
                     type="text"
                     placeholder="Avatar"
                     autocomplete=""
                   />
+                  <span v-if="!$v.form.avatar.url" class="help is-danger">
+                    Enter the right url format
+                    </span>
                 </div>
               </div>
               <div class="field">
@@ -83,6 +87,9 @@
                    <div v-if="$v.form.password.$error" class="form-error">
                     <span v-if="!$v.form.password.required" class="help is-danger">
                       Password is required
+                    </span>
+                     <span v-if="!$v.form.password.minLength" class="help is-danger">
+                      Password should not be less than 6 characters
                     </span>
                  </div>
                 </div>
@@ -100,6 +107,9 @@
                    <div v-if="$v.form.passwordConfirmation.$error" class="form-error">
                     <span v-if="!$v.form.passwordConfirmation.required" class="help is-danger">
                       Password is required
+                    </span>
+                     <span v-if="!$v.form.passwordConfirmation.sameAs" class="help is-danger">
+                       Passwords do not match
                     </span>
                  </div>
                 </div>
@@ -125,7 +135,7 @@
 </template>
 
 <script>
-import { required, email} from "vuelidate/lib/validators";
+import { required, email, minLength, sameAs, url} from "vuelidate/lib/validators";
 export default {
   data() {
     return {
@@ -154,14 +164,18 @@ export default {
           required,
           email
       },
-      avatar: {},
+      avatar: {
+          url
+      },
 
       password: {
-          required
+          required,
+          minLength: minLength(6)
       },
 
       passwordConfirmation: {
-          required
+          required,
+          sameAs: sameAs('password')
       },
     },
   },
