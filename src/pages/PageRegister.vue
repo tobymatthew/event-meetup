@@ -72,6 +72,9 @@
                   <span v-if="!$v.form.avatar.url" class="help is-danger">
                     Enter the right url format
                     </span>
+                     <span v-if="!$v.form.avatar.supportedFileType" class="help is-danger">
+                    wrong extension format
+                    </span>
                 </div>
               </div>
               <div class="field">
@@ -136,6 +139,7 @@
 
 <script>
 import { required, email, minLength, sameAs, url} from "vuelidate/lib/validators";
+import {supportedFileType} from '@/helper/validators'
 export default {
   data() {
     return {
@@ -165,7 +169,8 @@ export default {
           email
       },
       avatar: {
-          url
+          url,
+          supportedFileType
       },
 
       password: {
