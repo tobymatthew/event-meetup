@@ -72,6 +72,23 @@ exports.login= (req,res)=>{
   }
 
   return passport.authenticate('local', (err,passportUser)=>{
+    if(err){
+      next(err)
+    
+    }
 
-  })
+    if (passportUser) {
+      req.login(passportUser, function (err) {
+        if (err) { next(err); }
+
+        return res.json(passportUser)
+      });
+    }
+    else{
+      return res.status(422).send({errors:{
+       'authentication':  "oops something went wrong"
+      }})
+    }
+
+  })(req,res,next)
 }
