@@ -13,21 +13,19 @@ export default new vuex.Store({
     meetups,
     categories,
     threads,
-    auth
+    auth,
   },
 
   mutations: {
     setItems(state, { resource, items }) {
       state[resource].items = items;
     },
-    
+
     setitem(state, { resource, item }) {
       state[resource].item = item;
-      console.log(state[resource].item)
+      console.log(state[resource].item);
     },
   },
-
-  
 });
 
 // state: {

@@ -51,7 +51,10 @@
                   </div>
                 </div>
               </div>
-              <button :disabled="this.formIsInvalid" class="button is-block is-info is-large is-fullwidth">
+              <button
+                :disabled="this.formIsInvalid"
+                class="button is-block is-info is-large is-fullwidth"
+              >
                 Login
               </button>
             </form>
@@ -92,15 +95,20 @@ export default {
     },
   },
 
-  computed:{
-      formIsInvalid(){
-       return this.$v.form.$invalid
-      }
+  computed: {
+    formIsInvalid() {
+      return this.$v.form.$invalid;
+    },
   },
   methods: {
     login() {
       this.$v.form.$touch();
-      this.$store.dispatch("auth/loginWithEmailAndPassword", this.form);
+      this.$store
+        .dispatch("auth/loginWithEmailAndPassword", this.form)
+        .then(() => {
+          this.$router.push("/");
+        })
+        .catch((err) => console.log(err));
     },
   },
 };
