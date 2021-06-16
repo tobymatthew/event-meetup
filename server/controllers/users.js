@@ -1,7 +1,6 @@
-const { email } = require("vuelidate/lib/validators");
 const User = require("../models/users");
 
-const passport= require("passport")
+const passport = require("passport");
 
 exports.getUsers = function(req, res) {
   User.find({}).exec((errors, users) => {
@@ -11,6 +10,16 @@ exports.getUsers = function(req, res) {
 
     return res.json(users);
   });
+};
+
+exports.getCurrentUser = function (req, res, next) {
+  const user = req.user;
+
+  if(!user) {
+    return res.sendStatus(422);
+  }
+
+  return res.json(user);
 };
 
 exports.register = (req, res) => {
@@ -40,7 +49,6 @@ exports.register = (req, res) => {
     });
   }
 
-
   const user = new User(registerData);
 
   return user.save((error, savedUser) => {
@@ -52,8 +60,8 @@ exports.register = (req, res) => {
   });
 };
 
-exports.login= (req,res)=>{
- const {email, password} = req.body;
+exports.login = (req, res, next) => {
+  const { email, password } = req.body;
 
   if (!email) {
     return res.status(422).json({
@@ -71,29 +79,30 @@ exports.login= (req,res)=>{
     });
   }
 
-  return passport.authenticate('local', (err,passportUser)=>{
-    if(err){
-      next(err)
-    
+  return passport.authenticate("local", (err, passportUser) => {
+    if (err) {
+      next(err);
     }
 
     if (passportUser) {
-      req.login(passportUser, function (err) {
-        if (err) { next(err); }
+      req.login(passportUser, function(err) {
+        if (err) {
+          next(err);
+        }
 
-        return res.json(passportUser)
+        return res.json(passportUser);
+      });
+    } else {
+      return res.status(422).send({
+        errors: {
+          authentication: "oops something went wrong",
+        },
       });
     }
-    else{
-      return res.status(422).send({errors:{
-       'authentication':  "oops something went wrong"
-      }})
-    }
+  })(req, res, next);
+};
 
-  })(req,res,next)
-}
-
-exports.logout = function (req, res) {
-  req.logout()
-  return res.json({status: 'Session destroyed!'})
-}
+exports.logout = function(req, res) {
+  req.logout();
+  return res.json({ status: "Session destroyed!" });
+};

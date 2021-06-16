@@ -1,35 +1,61 @@
 import axios from "axios";
 
+
 export default {
   namespaced: true,
 
   state: {
-    user: [],
+    user:null,
+    isAuthResolved: false
   },
 
-  getters: {},
+  getters: {
+    authUser(state) { return state.user || null },
+    isAuthUser(state) {return !!state.user}
+  },
 
   actions: {
     loginWithEmailAndPassword({ commit }, userdata) {
-      axios
-        .post("api/v1/users/login", userdata)
+     return axios.post("api/v1/users/login", userdata)
         .then((res) => {
           const user = res.data;
+          console.log(user)
           commit("setAuthUser", user);
-          return user;
+         
         })
         .catch((err) => console.log(err));
     },
 
-    registerUser(userdata) {
+    getCurrentUser({commit}){
+     axios.get("api/v1/users/me")
+      .then(res=>{
+        const user=res.data;
+        commit("setAuthUser", user);
+          
+      })
+      .catch(()=>{
+        return undefined
+      })
+    },
+
+    registerUser(context,userdata) {
       axios.post("api/v1/users/register", userdata);
       console.log(userdata);
     },
+
+    logoutUser({commit}){
+      axios.post("api/v1/users/logout")
+       .then(()=>{
+        commit("setAuthUser", null);
+       })
+      
+          
+    }
   },
 
   mutations: {
     setAuthUser(state, user) {
-      state.user = user;
+      return state.user = user;
     },
   },
 };

@@ -15,6 +15,10 @@ export default {
     
     TheNavbar, 
     TheFooter
+  },
+
+  created(){
+    this.$store.dispatch('auth/getCurrentUser')
   }
 }
 </script>
