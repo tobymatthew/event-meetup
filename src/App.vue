@@ -1,8 +1,11 @@
 <template>
-  <div id="app">
+  <div v-if="isAuthResolved" id="app">
     <TheNavbar />
    <router-view/>
     <TheFooter />
+  </div>
+  <div v-else>
+    <AppSpinner/>
   </div>
 </template>
 
@@ -15,6 +18,12 @@ export default {
     
     TheNavbar, 
     TheFooter
+  },
+
+  computed:{
+   isAuthResolved(){
+   return this.$store.state.auth.isAuthResolved
+   }
   },
 
   created(){

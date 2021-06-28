@@ -31,6 +31,7 @@ export default {
       .then(res=>{
         const user=res.data;
         commit("setAuthUser", user);
+        commit( "setAuthState", true)
           
       })
       .catch(()=>{
@@ -57,5 +58,11 @@ export default {
     setAuthUser(state, user) {
       return state.user = user;
     },
-  },
-};
+
+    setAuthState(state,authState){
+      return state.isAuthResolved=authState;
+    }
+
+  }
+  
+}
