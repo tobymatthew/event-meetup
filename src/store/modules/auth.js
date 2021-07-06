@@ -27,7 +27,7 @@ export default {
     },
 
     getCurrentUser({commit}){
-     axios.get("api/v1/users/me")
+     axios.get("api/v1/users/me",{timeout:2000})
       .then(res=>{
         const user=res.data;
         commit("setAuthUser", user);
