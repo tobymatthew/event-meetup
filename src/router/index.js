@@ -1,6 +1,6 @@
 import  Vue from 'vue';
 import Router from 'vue-router';
-import store from '@/store';
+import store from '../store';
 
 import  PageHome from '@/pages/PageHome';
 import  PageMeetupDetail from '@/pages/PageMeetupDetail';
@@ -35,13 +35,14 @@ const router= new Router({
             path:'/secret',
             name: 'PageSecret',
             component:PageSecret,
-            beforeEnter (to, from, next) {
-                if (store.getters['auth/isAuthenticated']) {
-                  next ()
-                } else {
-                  next({name: 'PageNotAuthenticated'})
-                }
-              }
+            // beforeEnter (to, from, next) {
+            //     if (store.getters['auth/isAuthenticated']) {
+            //       next ()
+            //     } else {
+            //       next({name: 'PageNotAuthenticated'})
+            //     }
+            //   }
+            meta: {onlyAuthUser: true}
           },
        
         {
@@ -57,13 +58,15 @@ const router= new Router({
         {
             path:'/login',
             name: 'PageLogin',
-            component:PageLogin
+            component:PageLogin,
+            meta:{onlyGuestUser:true}
         },
 
         {
             path:'/register',
             name: 'PageRegister',
-            component:PageRegister
+            component:PageRegister,
+            meta:{onlyGuestUser:true}
         },
       {
         path: '/401',
@@ -82,6 +85,40 @@ const router= new Router({
     ],
 
     mode:'history'
+
+
+})
+
+router.beforeEach((to, from, next) => {
+   console.log( store.dispatch('auth/getCurrentUser'));
+
+  store.dispatch('auth/getCurrentUser')
+
+    .then(authUser => {
+      
+      if (to.meta.onlyAuthUser) {
+        if (store.getters['auth/isAuthUser']) {
+          console.log(authUser)
+          next()
+        } else {
+          next({name: 'PageNotAuthenticated'})
+          console.log(authUser)
+        }
+      } 
+      else if (to.meta.onlyGuestUser){
+           if(store.getters['auth/isAuthUser']){
+             next({path:'/'})
+           }
+
+           else{
+            next()
+           }
+      }
+      
+      else {
+        next()
+      }
+    })
 })
 
 export default router;

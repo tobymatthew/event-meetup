@@ -6,17 +6,17 @@
       <TheFooter />
     </div>
 
-    <!-- <div v-else>
-  <AppSpinner/>
-</div> -->
-
     <div v-else>
+  <AppSpinner/>
+</div>
+
+    <!-- <div v-else>
       <TheNavbar />
 
       <router-view />
 
       <TheFooter />>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -37,9 +37,9 @@ export default {
     },
   },
 
-  created() {
-    this.$store.dispatch("auth/getCurrentUser");
-  },
+  // created() {
+  //   this.$store.dispatch("auth/getCurrentUser");
+  // },
 };
 </script>
 
